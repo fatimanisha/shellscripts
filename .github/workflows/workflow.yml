@@ -37,8 +37,16 @@ jobs:
             $TenantId = '${{ secrets.AZURE_TENANT_ID }}'
             
             # Check if the credentials are set
-            if (-not $AppId -or -not $Password -or -not $TenantId) {
-              Write-Error 'Azure credentials are not set properly. Check your secrets.'
+            if (-not $AppId) {
+              Write-Error 'AZURE_APP_ID is not set.'
+              exit 1
+            }
+            if (-not $Password) {
+              Write-Error 'AZURE_PASSWORD is not set.'
+              exit 1
+            }
+            if (-not $TenantId) {
+              Write-Error 'AZURE_TENANT_ID is not set.'
               exit 1
             }
 
