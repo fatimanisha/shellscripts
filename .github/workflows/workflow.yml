@@ -1,1 +1,22 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Change to your branch name if needed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up PowerShell
+        uses: pwsh/pwsh@v1
+
+      - name: Run PowerShell scripts
+        run: |
+          pwsh -Command "Get-ChildItem -Path './CreateVM.ps1' | ForEach-Object { . $_.FullName }"
 
