@@ -35,21 +35,6 @@ jobs:
             $AppId = '${{ secrets.AZURE_APP_ID }}'
             $Password = '${{ secrets.AZURE_PASSWORD }}'
             $TenantId = '${{ secrets.AZURE_TENANT_ID }}'
-            
-            # Check if the credentials are set
-            if (-not $AppId) {
-              Write-Error 'AZURE_APP_ID is not set.'
-              exit 1
-            }
-            if (-not $Password) {
-              Write-Error 'AZURE_PASSWORD is not set.'
-              exit 1
-            }
-            if (-not $TenantId) {
-              Write-Error 'AZURE_TENANT_ID is not set.'
-              exit 1
-            }
-
             $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
             $Cred = New-Object System.Management.Automation.PSCredential ($AppId, $SecurePassword)
             Connect-AzAccount -Credential $Cred -Tenant $TenantId
