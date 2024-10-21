@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       
       # Install PowerShell
       - name: Install PowerShell
@@ -38,10 +38,6 @@ jobs:
             $AppID = $env:AZURE_APP_ID
             $Password = $env:AZURE_PASSWORD
             $Tenant = $env:AZURE_TENANT_ID
-            
-            if (-not $AppID -or -not $Password -or -not $Tenant) {
-              Write-Host 'Missing Azure credentials'; exit 1
-            }
             
             $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
             $Cred = New-Object System.Management.Automation.PSCredential ($AppID, $SecurePassword)
