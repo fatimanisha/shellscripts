@@ -28,6 +28,7 @@ jobs:
         run: pwsh -Command "Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force"
 
       # Login to Azure (using Service Principal)
+         # Login to Azure (using Service Principal)
       - name: Login to Azure
         run: |
           pwsh -Command "
@@ -35,8 +36,31 @@ jobs:
             $AppId = '${{ secrets.AZURE_APP_ID }}'
             $Password = '${{ secrets.AZURE_PASSWORD }}'
             $TenantId = '${{ secrets.AZURE_TENANT_ID }}'
+            
+            # Debugging output for credentials
+            Write-Host 'AppId: ' $AppId
+            Write-Host 'TenantId: ' $TenantId
+      
+            # Check if the credentials are set
+            if (-not $AppId) {
+              Write-Error 'AZURE_APP_ID is not set.'
+              exit 1
+            }
+            if (-not $Password) {
+              Write-Error 'AZURE_PASSWORD is not set.'
+              exit 1
+            }
+            if (-not $TenantId) {
+              Write-Error 'AZURE_TENANT_ID is not set.'
+              exit 1
+            }
+      
             $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
             $Cred = New-Object System.Management.Automation.PSCredential ($AppId, $SecurePassword)
+      
+            # Output the credential type for debugging
+            Write-Host 'Credential type: ' $Cred.GetType().FullName
+      
             Connect-AzAccount -Credential $Cred -Tenant $TenantId
           "
 
