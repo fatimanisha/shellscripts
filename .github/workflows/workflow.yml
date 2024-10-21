@@ -38,7 +38,14 @@ jobs:
           pwsh -Command "
             $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
             $Cred = New-Object System.Management.Automation.PSCredential ($AppId, $SecurePassword)
-            Connect-AzAccount -Credential $Cred -Tenant $TenantId
+            # Try to connect to Azure
+            try {
+                Connect-AzAccount -Credential $Cred -Tenant $TenantId
+                Write-Host 'Successfully logged in to Azure.'
+            } catch {
+                Write-Host 'Login to Azure failed. Please check your credentials and try again.'
+                exit 1  # Exit with an error code
+            }            
           "
 
       # Run the PowerShell Script
