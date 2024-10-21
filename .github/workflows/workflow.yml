@@ -35,11 +35,12 @@ jobs:
             AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
           pwsh -Command "
-            $AppID = $env:AZURE_APP_ID
-            $Password = $env:AZURE_PASSWORD
-            $Tenant = $env:AZURE_TENANT_ID
+            $AppID = "$env:AZURE_APP_ID"
+            $Password = "$env:AZURE_PASSWORD"
+            $Tenant = "$env:AZURE_TENANT_ID"
             $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
             $Cred = New-Object System.Management.Automation.PSCredential ($AppID, $SecurePassword)
+            
             Connect-AzAccount -Credential $Cred -Tenant $Tenant         
           "
 
