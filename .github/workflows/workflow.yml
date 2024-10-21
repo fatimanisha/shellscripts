@@ -42,7 +42,7 @@ jobs:
             Write-Host 'TenantId: ' $TenantId
       
             $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
-            $Cred = New-Object System.Management.Automation.PSCredential ($AppId, $SecurePassword)
+            $Cred = New-Object System.Management.Automation.PSCredential($AppId, $SecurePassword)
       
             # Output the credential type for debugging
             Write-Host 'Credential type: ' $Cred.GetType().FullName
