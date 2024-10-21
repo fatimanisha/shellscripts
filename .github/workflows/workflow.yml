@@ -3,7 +3,7 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - main  # Change to your branch name if needed
+      - main  # Adjust to your branch if needed
 
 jobs:
   build:
@@ -30,18 +30,22 @@ jobs:
       # Login to Azure (using Service Principal)
       - name: Login to Azure
         env:
-            AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
-            AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
-            AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
           pwsh -Command "
-            $AppID = "$env:AZURE_APP_ID"
-            $Password = "$env:AZURE_PASSWORD"
-            $Tenant = "$env:AZURE_TENANT_ID"
+            $AppID = $env:AZURE_APP_ID
+            $Password = $env:AZURE_PASSWORD
+            $Tenant = $env:AZURE_TENANT_ID
+            
+            if (-not $AppID -or -not $Password -or -not $Tenant) {
+              Write-Host 'Missing Azure credentials'; exit 1
+            }
+            
             $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
             $Cred = New-Object System.Management.Automation.PSCredential ($AppID, $SecurePassword)
-            
-            Connect-AzAccount -Credential $Cred -Tenant $Tenant         
+            Connect-AzAccount -Credential $Cred -Tenant $Tenant
           "
 
       # Run the PowerShell Script
