@@ -1,4 +1,4 @@
-# Tests/Script.Tests.ps1
+# Tests/script.tests.ps1
 
 Describe 'PowerShell Script Tests' {
 
