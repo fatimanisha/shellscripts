@@ -35,10 +35,9 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
           pwsh -Command "
-            $appId = '${{ secrets.AZURE_APP_ID }}';
-            $password = '${{ secrets.AZURE_PASSWORD }}' | ConvertTo-SecureString -AsPlainText -Force;
-            $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $appId, $password;
-            Connect-AzAccount -ServicePrincipal -Tenant '${{ secrets.AZURE_TENANT_ID }}' -Credential $credential;
+            $password = $env:AZURE_PASSWORD | ConvertTo-SecureString -AsPlainText -Force;
+            $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:AZURE_APP_ID, $password;
+            Connect-AzAccount -ServicePrincipal -Tenant $env:AZURE_TENANT_ID -Credential $credential;
           "
 
       # Run the PowerShell Script
