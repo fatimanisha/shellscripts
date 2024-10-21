@@ -3,7 +3,7 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - main  # Change to your branch name if needed
+      - main  # Adjust as necessary for your branch
 
 jobs:
   build:
@@ -30,16 +30,22 @@ jobs:
       # Login to Azure (using Service Principal)
       - name: Login to Azure
         env:
-            AppID: ${{ secrets.AZURE_APP_ID }}
-            Password: ${{ secrets.AZURE_PASSWORD }}
-            Tenant: ${{ secrets.AZURE_TENANT_ID }}
+            AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
+            AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+            AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
             ErrorActionPreference: "Stop"
         run: |
           pwsh -Command "
-            $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
-            $Cred = New-Object System.Management.Automation.PSCredential ($AppID, $SecurePassword)
-            
-            Connect-AzAccount -Credential $Cred -Tenant $Tenant         
+            # Validate variables
+            Write-Host 'AppID: $Env:AZURE_APP_ID'
+            Write-Host 'TenantId: $Env:AZURE_TENANT_ID'
+
+            # Convert to secure string
+            $SecurePassword = ConvertTo-SecureString $Env:AZURE_PASSWORD -AsPlainText -Force
+            $Cred = New-Object System.Management.Automation.PSCredential ($Env:AZURE_APP_ID, $SecurePassword)
+
+            # Connect to Azure
+            Connect-AzAccount -Credential $Cred -Tenant $Env:AZURE_TENANT_ID
           "
 
       # Run the PowerShell Script
