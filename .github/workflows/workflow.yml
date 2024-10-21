@@ -3,43 +3,35 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - main  # Adjust to your branch if needed
+      - main  # Trigger on push to main branch
+  pull_request:
+    branches:
+      - main  # Trigger on pull requests to the main branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3  # Use v3 of actions/checkout for latest features
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      # Install PowerShell
+      # Step 2: Install PowerShell
       - name: Install PowerShell
         run: |
           sudo apt-get update
           sudo apt-get install -y wget apt-transport-https software-properties-common
           wget -q "https://packages.microsoft.com/keys/microsoft.asc" -O- | sudo apt-key add -
-          wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb  # Use a stable Ubuntu version
+          wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb
           sudo dpkg -i packages-microsoft-prod.deb
           sudo apt-get update
           sudo apt-get install -y powershell
 
-      # Install Azure PowerShell Module
-      - name: Install Azure PowerShell Module
-        run: pwsh -Command "Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force"
+      # Step 3: Install Pester for testing
+      - name: Install Pester
+        run: pwsh -Command "Install-Module -Name Pester -Force -SkipPublisherCheck"
 
-      # Login to Azure (using Service Principal)
-      - name: Login to Azure
-        env:
-          AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
-          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: |
-          pwsh -Command "
-            $password = $env:AZURE_PASSWORD | ConvertTo-SecureString -AsPlainText -Force;
-            $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:AZURE_APP_ID, $password;
-            Connect-AzAccount -ServicePrincipal -Tenant $env:AZURE_TENANT_ID -Credential $credential;
-          "
-
-      # Run the PowerShell Script
-      - name: Run CreateVM Script
-        run: pwsh ./CreateVM.ps1
+      # Step 4: Run Pester Tests
+      - name: Run Pester Tests
+        run: pwsh -Command "Invoke-Pester -Script './Tests/YourScript.Tests.ps1' -Output Detailed"
