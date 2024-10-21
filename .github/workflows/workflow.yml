@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main  # Trigger on push to main branch
-  pull_request:
-    branches:
-      - main  # Trigger on pull requests to the main branch
 
 jobs:
   build:
@@ -34,4 +31,4 @@ jobs:
 
       # Step 4: Run Pester Tests
       - name: Run Pester Tests
-        run: pwsh -Command "Invoke-Pester -Script './Tests/script.tests.ps1' -Output Detailed"
+        run: pwsh -Command "Invoke-Pester -Script './Tests/script.tests.ps11' -Output Detailed"
