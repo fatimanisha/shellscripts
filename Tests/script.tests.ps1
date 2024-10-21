@@ -1,7 +1,5 @@
 # Tests/Script.Tests.ps1
 
-Import-Module Az
-
 Describe 'PowerShell Script Tests' {
 
     # Mock the Azure commands so no real Azure calls are made
