@@ -37,7 +37,7 @@ jobs:
         run: |
           pwsh -Command "
             $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
-            $Cred = New-Object System.Management.Automation.PSCredential($AppId, $SecurePassword)
+            $Cred = New-Object System.Management.Automation.PSCredential($AppId, $Password)
             Connect-AzAccount -Credential $Cred -Tenant $TenantId
           "
 
