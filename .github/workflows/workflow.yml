@@ -35,9 +35,10 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         run: |
           pwsh -Command "
-            Connect-AzAccount -ServicePrincipal -Tenant $env:AZURE_TENANT_ID -Credential (New-Object System.Management.Automation.PSCredential($env:AZURE_APP_ID, (ConvertTo-SecureString $env:AZURE_PASSWORD -AsPlainText -Force)))
+            $password = ConvertTo-SecureString $env:AZURE_PASSWORD -AsPlainText -Force;
+            $credential = New-Object System.Management.Automation.PSCredential ($env:AZURE_APP_ID, $password);
+            Connect-AzAccount -ServicePrincipal -Credential $credential -Tenant $env:AZURE_TENANT_ID;
           "
-
       # Run the PowerShell Script
       - name: Run CreateVM Script
         run: pwsh ./CreateVM.ps1
