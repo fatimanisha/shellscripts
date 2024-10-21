@@ -29,12 +29,13 @@ jobs:
 
       # Login to Azure (using Service Principal)
       - name: Login to Azure
+        env:
+            AppID: ${{ secrets.AZURE_APP_ID }}
+            Password: ${{ secrets.AZURE_PASSWORD }}
+            Tenant: ${{ secrets.AZURE_TENANT_ID }}
+            ErrorActionPreference: "Stop"
         run: |
           pwsh -Command "
-            $ErrorActionPreference = 'Stop'
-            $AppId = '${{ secrets.AZURE_APP_ID }}'
-            $Password = '${{ secrets.AZURE_PASSWORD }}'
-            $TenantId = '${{ secrets.AZURE_TENANT_ID }}'      
             $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
             $Cred = New-Object System.Management.Automation.PSCredential($AppId, $SecurePassword)
             Connect-AzAccount -Credential $Cred -Tenant $TenantId
