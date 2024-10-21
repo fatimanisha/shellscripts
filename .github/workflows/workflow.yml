@@ -10,19 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      
+      - uses: actions/checkout@v3  # Use v3 of actions/checkout for latest features
+
       # Install PowerShell
       - name: Install PowerShell
         run: |
           sudo apt-get update
           sudo apt-get install -y wget apt-transport-https software-properties-common
           wget -q "https://packages.microsoft.com/keys/microsoft.asc" -O- | sudo apt-key add -
-          wget -q https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb
+          wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb  # Use a stable Ubuntu version
           sudo dpkg -i packages-microsoft-prod.deb
           sudo apt-get update
           sudo apt-get install -y powershell
-      
+
       # Install Azure PowerShell Module
       - name: Install Azure PowerShell Module
         run: pwsh -Command "Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force"
@@ -33,13 +33,11 @@ jobs:
           AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
           AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        run: |            
-            pwsh -Command "
-              $SecurePassword = ConvertTo-SecureString $env:AZURE_PASSWORD -AsPlainText -Force
-              $Cred = New-Object System.Management.Automation.PSCredential ($env:AZURE_APP_ID, $SecurePassword)
-              Connect-AzAccount -Credential $Cred -Tenant $env:AZURE_TENANT_ID
-            "
-      
+        run: |
+          pwsh -Command "
+            Connect-AzAccount -ServicePrincipal -Tenant $env:AZURE_TENANT_ID -Credential (New-Object System.Management.Automation.PSCredential($env:AZURE_APP_ID, (ConvertTo-SecureString $env:AZURE_PASSWORD -AsPlainText -Force)))
+          "
+
       # Run the PowerShell Script
       - name: Run CreateVM Script
         run: pwsh ./CreateVM.ps1
